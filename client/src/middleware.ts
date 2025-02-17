@@ -1,18 +1,16 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+// import { NextResponse } from "next/server";
 
-const isPublicRoute = createRouteMatcher([
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/api/uploadthing",
-  "/api/webhook",
-  "/site",
-]);
+const isPublicRoute = createRouteMatcher(["/site", "/api/uploadthing"]);
 
-export default clerkMiddleware(async (auth, request) => {
+export default clerkMiddleware(async (authPromise, request) => {
+  const auth = await authPromise; // Await the promise to get the auth object
+
   if (!isPublicRoute(request)) {
-    await auth.protect();
+    auth.protect(); // Enforce authentication
   }
 });
+// export default clerkMiddleware();
 
 export const config = {
   matcher: [
